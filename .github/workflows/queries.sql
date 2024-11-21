@@ -1,5 +1,5 @@
-select COUNT(customer_id) as customers_count
-from customers c;
+SELECT COUNT(customer_id) as customers_count
+FROM customers c;
 -- В select выводим поле customer_id, агрегируем его с помощью функции COUNT,
 -- считаем общее количество покупателей, присваиваем as
 -- From - выводим таблицу из которой берем данные
@@ -20,7 +20,6 @@ average_income AS (
         AVG(income / NULLIF(operations, 0)) AS avg_income
     FROM tab
 )
-
 SELECT 
     CONCAT(emp.first_name, ' ', emp.last_name) AS seller,
     ROUND(income / NULLIF(operations, 0)) AS average_income
@@ -31,22 +30,23 @@ WHERE
 ORDER BY average_income ASC;
 
 -- Запрос по top_10_total_income.csv 
-with tab as(
-select s.sales_person_id, p.product_id, SUM(s.quantity * p.price) as income, 
-COUNT(s.sales_person_id) as operations
-from products p 
-inner join sales s 
-USING(product_id)
-group by p.product_id, s.sales_person_id
+WITH tab AS (
+    SELECT 
+        s.sales_person_id, 
+        SUM(s.quantity * p.price) AS income, 
+        COUNT(s.sales_person_id) AS operations
+    FROM products p 
+    INNER JOIN sales s USING(product_id)
+    GROUP BY s.sales_person_id
 )
-select CONCAT(emp.first_name || emp.last_name) as seller,
-tab.operations, tab.income
-from tab
-inner join employees as emp
-on tab.sales_person_id = emp.employee_id 
-group by seller, tab.income, tab.operations
-order by income desc
-limit 10;
+SELECT 
+    emp.first_name || ' ' || emp.last_name AS seller,
+    tab.operations, 
+    tab.income
+FROM tab
+INNER JOIN employees AS emp ON tab.sales_person_id = emp.employee_id 
+ORDER BY tab.income DESC
+LIMIT 10;
 
 -- Запрос day_of_the_week_income.csv
 SELECT 
