@@ -51,7 +51,7 @@ LIMIT 10;
 -- Запрос day_of_the_week_income.csv
 SELECT 
     CONCAT(emp.first_name, ' ', emp.last_name) AS seller,
-    TO_CHAR(s.sale_date, 'Day') AS day_of_week,
+    INITCAP(TO_CHAR(s.sale_date, 'Day')) AS day_of_week,
     FLOOR(SUM(s.quantity * p.price)) AS income
 FROM 
     sales s
