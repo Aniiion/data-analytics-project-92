@@ -80,7 +80,7 @@ ORDER BY
 -- Запрос для customers_by_month.csv 
 
 SELECT 
-    TO_CHAR(s.sale_date, 'YYYY-MM') AS date,
+    TO_CHAR(s.sale_date, 'YYYY-MM') AS selling_month,
     COUNT(DISTINCT c.customer_id) AS total_customers,
     FLOOR(SUM(s.quantity * p.price)) AS income
 FROM 
@@ -90,9 +90,9 @@ JOIN
 JOIN 
     customers c ON s.customer_id = c.customer_id
 GROUP BY 
-    date
+    selling_month
 ORDER BY 
-    date ASC;
+    selling_month ASC;
 
 -- Запрос для special_offer.csv 
 SELECT DISTINCT
