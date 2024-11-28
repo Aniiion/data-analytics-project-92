@@ -60,9 +60,9 @@ INNER JOIN
 INNER JOIN 
     employees emp ON s.sales_person_id = emp.employee_id
 GROUP BY 
-    emp.first_name, emp.last_name, TO_CHAR(s.sale_date, 'Day'), EXTRACT(DOW FROM s.sale_date)
-ORDER BY 
-    EXTRACT(DOW FROM s.sale_date), seller;
+    emp.first_name, emp.last_name, TO_CHAR(s.sale_date, 'Day'), EXTRACT(isodow FROM s.sale_date)
+ORDER BY EXTRACT(isodow FROM s.sale_date), seller;
+
 -- Запрос для age_groups.csv
 SELECT 
     CASE 
