@@ -52,7 +52,7 @@ LIMIT 10;
 SELECT 
     CONCAT(emp.first_name, ' ', emp.last_name) AS seller,
     TO_CHAR(s.sale_date, 'Day') AS day_of_week,
-    ROUND(SUM(s.quantity * p.price)) AS income
+    FLOOR(SUM(s.quantity * p.price)) AS income
 FROM 
     sales s
 INNER JOIN 
