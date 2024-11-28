@@ -33,7 +33,7 @@ ORDER BY average_income ASC;
 WITH tab AS (
     SELECT 
         s.sales_person_id, 
-        SUM(s.quantity * p.price) AS income, 
+        FLOOR(SUM(s.quantity * p.price)) AS income, 
         COUNT(s.sales_person_id) AS operations
     FROM products p 
     INNER JOIN sales s USING(product_id)
