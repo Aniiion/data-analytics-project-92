@@ -78,10 +78,11 @@ GROUP BY
 ORDER BY 
     MIN(age) ASC;
 -- Запрос для customers_by_month.csv 
+
 SELECT 
     TO_CHAR(s.sale_date, 'YYYY-MM') AS date,
     COUNT(DISTINCT c.customer_id) AS total_customers,
-    SUM(s.quantity * p.price) AS income
+    FLOOR(SUM(s.quantity * p.price)) AS income
 FROM 
     sales s
 JOIN 
@@ -92,6 +93,7 @@ GROUP BY
     date
 ORDER BY 
     date ASC;
+
 -- Запрос для special_offer.csv 
 SELECT DISTINCT
     CONCAT(c.first_name, ' ', c.last_name) AS customer,
