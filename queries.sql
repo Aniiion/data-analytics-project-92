@@ -1,116 +1,131 @@
-SELECT COUNT(customer_id) as customers_count
-FROM customers c;
+-- Запрос по customers_count.csv.
+select count(customer_id) as customers_count
+from customers c;
 -- В select выводим поле customer_id, агрегируем его с помощью функции COUNT,
 -- считаем общее количество покупателей, присваиваем as
 -- From - выводим таблицу из которой берем данные
 
+-- Запрос по top_10_profitable_products.csv
+select
+    p.product_id AS product_id ,
+    FLOOR(SUM(p.price * s.quantity)) AS amount
+from
+    Products p
+join
+    Sales s ON p.product_id = s.product_id 
+group by
+    p.product_id 
+order by 
+    Amount desc
+limit 10;
+
 
 -- Запрос по lowest_average_income.csv
-WITH tab AS (
-    SELECT 
+with tab AS (
+    select 
         s.sales_person_id, 
-        SUM(s.quantity * p.price) AS income, 
-        COUNT(*) AS operations
-    FROM products p 
-    INNER JOIN sales s USING(product_id)
-    GROUP BY s.sales_person_id
+        sum(s.quantity * p.price) AS income, 
+        count(*) AS operations
+    from products p 
+    inner join sales s using(product_id)
+    group by s.sales_person_id
 ),
 average_income AS (
-    SELECT 
+    select
         AVG(income / NULLIF(operations, 0)) AS avg_income
-    FROM tab
+    from tab
 )
-SELECT 
-    CONCAT(emp.first_name, ' ', emp.last_name) AS seller,
-    ROUND(income / NULLIF(operations, 0)) AS average_income
-FROM tab
-INNER JOIN employees emp ON tab.sales_person_id = emp.employee_id
-WHERE 
-    (income / NULLIF(operations, 0)) < (SELECT avg_income FROM average_income)
-ORDER BY average_income ASC;
+select
+    concat(emp.first_name, ' ', emp.last_name) AS seller,
+    round(income / NULLIF(operations, 0)) AS average_income
+from tab
+inner join employees emp ON tab.sales_person_id = emp.employee_id
+where 
+    (income / NULLIF(operations, 0)) < (select avg_income from average_income)
+order by average_income ASC;
 
 -- Запрос по top_10_total_income.csv 
-WITH tab AS (
-    SELECT 
+with tab AS (
+    select
         s.sales_person_id, 
-        FLOOR(SUM(s.quantity * p.price)) AS income, 
+        floor(sum(s.quantity * p.price)) AS income, 
         COUNT(s.sales_person_id) AS operations
-    FROM products p 
-    INNER JOIN sales s USING(product_id)
-    GROUP BY s.sales_person_id
+    from products p 
+    inner join sales s using(product_id)
+    group by s.sales_person_id
 )
-SELECT 
+select
     emp.first_name || ' ' || emp.last_name AS seller,
     tab.operations, 
     tab.income
-FROM tab
-INNER JOIN employees AS emp ON tab.sales_person_id = emp.employee_id 
-ORDER BY tab.income DESC
-LIMIT 10;
+from tab
+inner join employees AS emp ON tab.sales_person_id = emp.employee_id 
+order by tab.income DESC
+limit 10;
 
 -- Запрос day_of_the_week_income.csv
-SELECT 
-    CONCAT(emp.first_name, ' ', emp.last_name) AS seller,
-    TO_CHAR(s.sale_date, 'day') AS day_of_week,
-    FLOOR(SUM(s.quantity * p.price)) AS income
-FROM 
+select
+    concat(emp.first_name, ' ', emp.last_name) AS seller,
+    to_char(s.sale_date, 'day') AS day_of_week,
+    floor(SUM(s.quantity * p.price)) AS income
+from
     sales s
-INNER JOIN 
+inner join
     products p ON s.product_id = p.product_id
-INNER JOIN 
+inner join 
     employees emp ON s.sales_person_id = emp.employee_id
-GROUP BY 
-    emp.first_name, emp.last_name, TO_CHAR(s.sale_date, 'day'), EXTRACT(isodow FROM s.sale_date)
-ORDER BY EXTRACT(isodow FROM s.sale_date), seller;
+group by
+    emp.first_name, emp.last_name, TO_CHAR(s.sale_date, 'day'), EXTRACT(isodow from s.sale_date)
+group by extract(isodow from s.sale_date), seller;
 
 -- Запрос для age_groups.csv
-SELECT 
+select
     CASE 
         WHEN age BETWEEN 16 AND 25 THEN '16-25'
         WHEN age BETWEEN 26 AND 40 THEN '26-40'
         ELSE '40+' 
     END AS age_category,
-    COUNT(*) AS age_count
-FROM 
+    count(*) AS age_count
+from 
     customers
-GROUP BY 
+group by
     age_category
-ORDER BY 
-    MIN(age) ASC;
+order by
+    min(age) ASC;
 -- Запрос для customers_by_month.csv 
 
-SELECT 
-    TO_CHAR(s.sale_date, 'YYYY-MM') AS selling_month,
-    COUNT(DISTINCT c.customer_id) AS total_customers,
-    FLOOR(SUM(s.quantity * p.price)) AS income
-FROM 
+select
+    to_char(s.sale_date, 'YYYY-MM') AS selling_month,
+    count(distinct c.customer_id) AS total_customers,
+    floor(SUM(s.quantity * p.price)) AS income
+from
     sales s
-JOIN 
+join
     products p ON s.product_id = p.product_id
-JOIN 
+join
     customers c ON s.customer_id = c.customer_id
-GROUP BY 
+group by
     selling_month
-ORDER BY 
+order by
     selling_month ASC;
 
 -- Запрос для special_offer.csv 
-SELECT DISTINCT
-    CONCAT(c.first_name, ' ', c.last_name) AS customer,
+select distinct
+    concat(c.first_name, ' ', c.last_name) AS customer,
     s.sale_date,
-    CONCAT(e.first_name, ' ', e.last_name) AS seller
-FROM
+    concat(e.first_name, ' ', e.last_name) AS seller
+from
     customers c
-JOIN sales s ON c.customer_id = s.customer_id
-JOIN products p ON s.product_id = p.product_id
-JOIN employees e ON s.sales_person_id = e.employee_id
-WHERE
+join sales s ON c.customer_id = s.customer_id
+join products p ON s.product_id = p.product_id
+join employees e ON s.sales_person_id = e.employee_id
+where
     s.sale_date = (
-        SELECT MIN(s1.sale_date)
-        FROM sales s1
-        WHERE s1.customer_id = c.customer_id
+        select MIN(s1.sale_date)
+        from sales s1
+        where s1.customer_id = c.customer_id
     )
     AND p.price = 0
-ORDER BY
+order by
     customer, seller;
 
