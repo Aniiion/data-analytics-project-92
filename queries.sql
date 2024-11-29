@@ -5,21 +5,6 @@ from customers c;
 -- считаем общее количество покупателей, присваиваем as
 -- From - выводим таблицу из которой берем данные
 
--- Запрос по top_10_profitable_products.csv
-select
-    p.product_id AS product_id ,
-    FLOOR(SUM(p.price * s.quantity)) AS amount
-from
-    Products p
-join
-    Sales s ON p.product_id = s.product_id 
-group by
-    p.product_id 
-order by 
-    Amount desc
-limit 10;
-
-
 -- Запрос по lowest_average_income.csv
 with tab AS (
     select 
