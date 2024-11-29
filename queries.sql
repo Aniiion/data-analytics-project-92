@@ -5,6 +5,9 @@ from customers c;
 -- считаем общее количество покупателей, присваиваем as
 -- From - выводим таблицу из которой берем данные
 
+-- Для top_10_profitable_products
+https://docs.google.com/spreadsheets/d/11lo9qv5sMIbjXkjlhoWk0PlchVNUnpERdKoMZX6b8AQ/edit?usp=sharing
+
 -- Запрос по lowest_average_income.csv
 with tab AS (
     select 
