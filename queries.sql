@@ -51,7 +51,7 @@ LIMIT 10;
 -- Запрос day_of_the_week_income.csv
 SELECT 
     CONCAT(emp.first_name, ' ', emp.last_name) AS seller,
-    TO_CHAR(s.sale_date, 'Day') AS day_of_week,
+    TO_CHAR(s.sale_date, 'day') AS day_of_week,
     FLOOR(SUM(s.quantity * p.price)) AS income
 FROM 
     sales s
@@ -60,7 +60,7 @@ INNER JOIN
 INNER JOIN 
     employees emp ON s.sales_person_id = emp.employee_id
 GROUP BY 
-    emp.first_name, emp.last_name, TO_CHAR(s.sale_date, 'Day'), EXTRACT(isodow FROM s.sale_date)
+    emp.first_name, emp.last_name, TO_CHAR(s.sale_date, 'day'), EXTRACT(isodow FROM s.sale_date)
 ORDER BY EXTRACT(isodow FROM s.sale_date), seller;
 
 -- Запрос для age_groups.csv
