@@ -7,6 +7,7 @@ from customers c;
 
 -- Для top_10_profitable_products
 https://docs.google.com/spreadsheets/d/11lo9qv5sMIbjXkjlhoWk0PlchVNUnpERdKoMZX6b8AQ/edit?usp=sharing
+    Сама таблица в TABLE, решение в PRODUCTS
 
 -- Запрос по lowest_average_income.csv
 with tab AS (
